@@ -1,4 +1,4 @@
-import { Dimensions, Platform, StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 
 import { DropDownStyled } from '@/components/DropDwonStyled';
 import { HeaderBar } from '@/components/HeaderBar';
@@ -73,13 +73,17 @@ export default function DashboardScreen() {
         notificationCount={5}
         showProfile={true}
         variant="gradient"
-        showBackButton={true}
+        showBackButton={false}
         onBackPress={goBack}
         backgroundColor={Colors.bg_dark}
       />
       <SafeScreen
         scrollable={true}
-        edges={['bottom', 'left', 'right',]}
+        edges={['bottom', 'left', 'right']}
+        hasFloatingTabBar={true}
+        contentContainerStyle={{
+          paddingTop: 20,
+        }}
       >
         {/* Point Sale */}
         <View style={styles.pointOfSaleContainer}>

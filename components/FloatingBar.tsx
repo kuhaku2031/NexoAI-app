@@ -1,6 +1,6 @@
-// components/FloatingTabBar.tsx
+// components/FloatingBar.tsx - CON LUCIDE ICONS
 import { Colors } from '@/constants/Colors';
-import { Ionicons } from '@expo/vector-icons';
+import { IconName } from '@/constants/IconMaps';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
@@ -9,13 +9,16 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
+  SharedValue,
 } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LucideIcon } from './common/LucideIcon';
 
 interface TabItem {
   name: string;
   label: string;
-  icon: string;
-  activeIcon?: string;
+  icon: IconName; 
+  activeIcon?: IconName;
 }
 
 interface FloatingTabBarProps {
@@ -32,6 +35,7 @@ export function FloatingTabBar({
   tabs,
 }: FloatingTabBarProps) {
   const selectedIndex = useSharedValue(state.index);
+  const insets = useSafeAreaInsets();
 
   const handlePress = (route: any, index: number, isFocused: boolean) => {
     selectedIndex.value = withSpring(index);
@@ -48,7 +52,14 @@ export function FloatingTabBar({
   };
 
   return (
-    <View style={styles.container}>
+    <View 
+      style={[
+        styles.container,
+        { 
+          paddingBottom: Platform.OS === 'ios' ? insets.bottom : 0,
+        }
+      ]}
+    >
       <BlurView
         intensity={Platform.OS === 'ios' ? 100 : 80}
         tint="light"
@@ -56,7 +67,6 @@ export function FloatingTabBar({
       >
         <View style={styles.tabContainer}>
           {state.routes.map((route: any, index: number) => {
-            const { options } = descriptors[route.key];
             const isFocused = state.index === index;
             const tab = tabs[index];
 
@@ -75,7 +85,6 @@ export function FloatingTabBar({
           })}
         </View>
 
-        {/* Indicador animado */}
         <AnimatedIndicator
           selectedIndex={selectedIndex}
           tabCount={tabs.length}
@@ -108,6 +117,9 @@ function TabButton({ route, index, isFocused, tab, onPress }: TabButtonProps) {
     scale.value = withSpring(1);
   };
 
+  // Determinar qué icono usar (activo o inactivo)
+  const iconToShow = isFocused && tab.activeIcon ? tab.activeIcon : tab.icon;
+
   return (
     <Pressable
       onPress={() => onPress(route, index, isFocused)}
@@ -123,17 +135,21 @@ function TabButton({ route, index, isFocused, tab, onPress }: TabButtonProps) {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           >
-            <Ionicons
-              name={tab.activeIcon || tab.icon}
+            <LucideIcon
+              name={iconToShow}
               size={24}
               color="#ffffff"
+              strokeWidth={2.5}
+              variant='default'
             />
           </LinearGradient>
         ) : (
-          <Ionicons
-            name={tab.icon}
+          <LucideIcon
+            name={iconToShow}
             size={24}
             color={Colors.text_seconday}
+            strokeWidth={2}
+            variant='default'
           />
         )}
       </Animated.View>
@@ -152,7 +168,7 @@ function TabButton({ route, index, isFocused, tab, onPress }: TabButtonProps) {
 }
 
 interface AnimatedIndicatorProps {
-  selectedIndex: Animated.SharedValue<number>;
+  selectedIndex: SharedValue<number>;
   tabCount: number;
 }
 
@@ -177,7 +193,7 @@ function AnimatedIndicator({
   return (
     <Animated.View style={[styles.indicator, animatedStyle]}>
       <LinearGradient
-        colors={[Colors.bg_dark, Colors.primary]}
+        colors={[Colors.primary, Colors.accent]}
         style={styles.indicatorGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -190,23 +206,28 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     bottom: 0,
-    width: '100%',
-    elevation: 10,
+    left: 0,
+    right: 0,
+    elevation: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.15,
     shadowRadius: 12,
-    overflow: 'hidden',
+    zIndex: 1000,
   },
   blurContainer: {
-    borderRadius: 24,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
     overflow: 'hidden',
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    backgroundColor: 'rgba(255, 255, 255, 0.75)',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.5)',
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderBottomWidth: 0,
   },
   tabContainer: {
     flexDirection: 'row',
+    paddingTop: 12,
+    paddingBottom: 8,
     paddingHorizontal: 8,
   },
   tabButton: {
@@ -244,6 +265,7 @@ const styles = StyleSheet.create({
   },
   indicatorGradient: {
     flex: 1,
-    borderRadius: 2,
+    borderTopLeftRadius: 2,
+    borderTopRightRadius: 2,
   },
 });

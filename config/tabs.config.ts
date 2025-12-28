@@ -1,3 +1,5 @@
+// config/tabs.config.ts - CON LUCIDE ICONS
+import { IconName } from "@/constants/IconMaps";
 import { Permission, UserRole } from "@/types/auth.types";
 
 /**
@@ -6,7 +8,8 @@ import { Permission, UserRole } from "@/types/auth.types";
 export interface TabConfig {
   name: string;
   title: string;
-  icon: string;
+  icon: IconName;
+  activeIcon?: IconName; 
   requiredPermission?: Permission;
   requiredRole?: UserRole;
   allowedRoles?: UserRole[];
@@ -14,55 +17,57 @@ export interface TabConfig {
 
 /**
  * Configuración de tabs con sus permisos requeridos
+ * 
+ * NOTA: Los iconos deben estar definidos en constants/iconMaps.ts
+ * Si necesitas un icono nuevo:
+ * 1. Añádelo a iconMaps.ts
+ * 2. Úsalo aquí
  */
 export const TAB_CONFIGS: TabConfig[] = [
   {
     name: "chat/index",
     title: "Chat",
-    icon: "chatbubbles-outline",
+    icon: "chat",
+    activeIcon: "chat",
     requiredPermission: Permission.USE_CHAT,
   },
   {
     name: "products/index",
     title: "Products",
-    icon: "pricetags-outline",
+    icon: "products",
+    activeIcon: "products",
     requiredPermission: Permission.VIEW_PRODUCTS,
   },
   {
     name: "dashboard/index",
     title: "Dashboard",
-    icon: "grid-outline",
+    icon: "home",
+    activeIcon: "home",
     requiredPermission: Permission.VIEW_DASHBOARD,
   },
   {
     name: "pos/index",
     title: "POS",
-    icon: "calculator-outline",
+    icon: "shopping-bag",
+    activeIcon: "shopping-bag",
     requiredPermission: Permission.USE_POS,
   },
   {
     name: "profile/index",
     title: "Profile",
-    icon: "person-outline",
+    icon: "profile",
+    activeIcon: "profile",
     requiredPermission: Permission.VIEW_PROFILE,
   },
 ];
 
-/**
- * Filtra las tabs basándose en los permisos del usuario
- * @param hasPermission - Función para verificar permisos
- * @returns Array de tabs que el usuario puede ver
- */
 export function getVisibleTabs(
   hasPermission: (permission: Permission) => boolean
 ): TabConfig[] {
   return TAB_CONFIGS.filter((tab) => {
-    // Si no requiere permiso, está visible para todos
     if (!tab.requiredPermission) {
       return true;
     }
-
-    // Verificar si tiene el permiso requerido
     return hasPermission(tab.requiredPermission);
   });
 }

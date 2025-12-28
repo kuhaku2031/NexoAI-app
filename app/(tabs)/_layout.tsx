@@ -20,16 +20,13 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
       }}
-      // Usa tu tab bar personalizado
       tabBar={(props) => (
         <FloatingTabBar
           {...props}
           tabs={visibleTabs.map(tab => ({
-            name: tab.name,
+            name: tab.icon,
             label: tab.title,
             icon: tab.icon,
-            // Opcional: icono activo diferente
-            activeIcon: tab.icon.replace('-outline', ''),
           }))}
         />
       )}
