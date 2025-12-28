@@ -22,7 +22,7 @@ export function SafeScreen({
   style,
   clasName,
   edges = ['top', 'bottom'],
-  backgroundColor = Colors.bg_light_secondary,
+  backgroundColor = '',
   scrollable = false,
   contentContainerStyle,
   centered = false,
@@ -45,7 +45,7 @@ export function SafeScreen({
     <SafeAreaView
       mode={mode}
       className={clasName}
-      style={[styles.container, { backgroundColor }, style, contentContainerStyle]}
+      style={[styles.container, backgroundColor ? { backgroundColor } : { backgroundColor: Colors.bg_light_secondary }, style, contentContainerStyle]}
       edges={edges}
     >
       {content}

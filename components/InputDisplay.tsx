@@ -48,7 +48,7 @@ export function InputDisplay({
                     style={styles.input}
                     onChangeText={onChangeText}
                     placeholder={placeholder}
-                    secureTextEntry={showToggle == true ? false : !showPassword  }
+                    secureTextEntry={showToggle === true ? false : !showPassword  }
                     className={classNameInput}
                 />
 
@@ -83,8 +83,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: ComponentColors.input.background,
-        borderWidth: 1,
-        borderColor: ComponentColors.input.border,
         borderRadius: 12,
         paddingHorizontal: 12,
         height: 50,

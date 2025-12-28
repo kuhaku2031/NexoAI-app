@@ -1,11 +1,9 @@
 // components/GradientCircleIcon.tsx
-import { Colors } from '@/constants/Colors';
-import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, View } from 'react-native';
-
+import * as icons from 'lucide-react-native/icons';
 interface GradientCircleIconProps {
-  iconName: any;
+  iconName: keyof typeof icons;
   iconSize?: number;
   gradientColors?: any;
   start?: { x: number; y: number };
@@ -17,12 +15,13 @@ interface GradientCircleIconProps {
 export function GradientCircleIcon({
   iconName,
   iconSize = 30,
-  gradientColors = [Colors.accent,Colors.primary],
+  gradientColors = [],
   start = { x: 0, y: 0 },
   end = { x: 1, y: 1 },
   iconColor = "",
-  circleSize = 80,
+  circleSize = 30,
 }: GradientCircleIconProps) {
+  const LucideIcon = icons[iconName];
   return (
     <LinearGradient
       colors={gradientColors}
@@ -38,8 +37,7 @@ export function GradientCircleIcon({
       ]}
     >
       <View style={styles.iconContainer}>
-        <Ionicons
-          name={iconName}
+        <LucideIcon
           size={iconSize}
           color={iconColor}
         />

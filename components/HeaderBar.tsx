@@ -39,13 +39,13 @@ export function HeaderBar({
   rightComponent,
   leftComponent,
   variant = 'default',
-  backgroundColor = Colors.bg_light_secondary,
+  backgroundColor = 'transparent',
 }: HeaderBarProps) {
   const insets = useSafeAreaInsets();
 
   // Contenido del header
   const HeaderContent = () => (
-    <View style={[styles.container, { paddingTop: insets.top + 8 }]}>
+    <View style={[styles.container, { paddingTop: insets.top + 8 },]}>
       {/* Left Side */}
       <View style={styles.leftContainer}>
         {leftComponent ? (
@@ -107,14 +107,16 @@ export function HeaderBar({
   // Renderizar según variante
   if (variant === 'gradient') {
     return (
-      <LinearGradient
-        colors={[Colors.accent, Colors.primary]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.gradientWrapper}
-      >
-        <HeaderContent />
-      </LinearGradient>
+      <View style={styles.gradientContainer}>
+        <LinearGradient
+          colors={[Colors.bg_dark, Colors.primary]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.gradientWrapper}
+        >
+          <HeaderContent />
+        </LinearGradient>
+      </View>
     );
   }
 
@@ -128,16 +130,23 @@ export function HeaderBar({
 
   // Default
   return (
-    <View style={[styles.wrapper, { backgroundColor }]}>
+    <View style={[styles.wrapper, { backgroundColor: backgroundColor || Colors.primary }]}>
       <HeaderContent />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  gradientContainer: {
+    width: '100%',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    backgroundColor: '#e9f1fb',
+  },
   wrapper: {
     width: '100%',
-    elevation: 2,
+    overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -145,11 +154,10 @@ const styles = StyleSheet.create({
   },
   gradientWrapper: {
     width: '100%',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    overflow: 'hidden',
+    backgroundColor: 'transparent',
   },
   container: {
     flexDirection: 'row',
@@ -158,12 +166,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 16,
     minHeight: 56,
-    backgroundColor: Colors.accent,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    backgroundColor: Colors.primary,
   },
   leftContainer: {
     flexDirection: 'row',

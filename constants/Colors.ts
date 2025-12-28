@@ -29,8 +29,42 @@ export const Colors = {
   disabled: '#90e0ef',
   overlay: 'rgba(3, 4, 94, 0.5)', // Dark overlay con tu color base
 
+  modules: {
+    dashboard: {
+      accent: '#2584b7',         // Azul medio
+      gradient: ['#002a52', '#023e8a'],
+    },
+    chat: {
+      accent: '#8B5CF6',         // Morado (IA)
+      gradient: ['#002a52', '#4c1d95'],
+    },
+    pos: {
+      accent: '#34C759',         // Verde (ventas)
+      gradient: ['#002a52', '#065f46'],
+    },
+    products: {
+      accent: '#F59E0B',         // Naranja (inventario)
+      gradient: ['#002a52', '#92400e'],
+    },
+    finance: {
+      accent: '#10B981',         // Verde esmeralda (dinero)
+      gradient: ['#002a52', '#047857'],
+    },
+    profile: {
+      accent: '#3B82F6',         // Azul claro
+      gradient: ['#002a52', '#1e40af'],
+    },
+  },
 };
 
+// En tu Colors.ts, añade:
+export const TabBarColors = {
+  background: 'rgba(255, 255, 255, 0.85)',
+  activeGradient: ['#023e8a', '#48cae4'],
+  inactiveIcon: '#90e0ef',
+  activeIcon: '#ffffff',
+  border: 'rgba(255, 255, 255, 0.5)',
+};
 // Tema oscuro (por defecto)
 export const DarkTheme = {
   ...Colors,
