@@ -72,14 +72,14 @@ export default function DashboardScreen() {
         showNotifications={true}
         notificationCount={5}
         showProfile={true}
-        variant="default"
+        variant="gradient"
         showBackButton={true}
         onBackPress={goBack}
+        backgroundColor={Colors.bg_dark}
       />
       <SafeScreen
         scrollable={true}
         edges={['bottom', 'left', 'right',]}
-        contentContainerStyle={{ paddingTop: 20, paddingBottom: Platform.OS === 'ios' ? 88 : 68 }}
       >
         {/* Point Sale */}
         <View style={styles.pointOfSaleContainer}>

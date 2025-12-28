@@ -44,7 +44,7 @@ export default function LoginScreen() {
 
       <View style={styles.content}>
         <View style={styles.header}>
-          <GradientCircleIcon iconName="storefront-outline" iconSize={40} iconColor={"#ffffff"} />
+          <GradientCircleIcon iconName="BrainCircuit" iconSize={40} circleSize={80} iconColor={"#ffffff"} gradientColors={[Colors.primary, Colors.secondary]}/>
           <ThemedText type='title' style={{ color: Colors.primary }}>Business POS</ThemedText>
           <ThemedText type='subtitle' style={{ color: Colors.secondary }}>Inicia sesión en tu cuenta</ThemedText>
         </View>

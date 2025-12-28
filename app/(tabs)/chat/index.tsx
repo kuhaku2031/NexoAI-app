@@ -4,9 +4,10 @@ import { HeaderBar } from '@/components/HeaderBar';
 import { InputDisplay } from '@/components/InputDisplay';
 import { SafeScreen } from '@/components/SafeScreen';
 import { ThemedText } from '@/components/ThemedText';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { goBack } from 'expo-router/build/global-state/routing';
 import React from 'react';
+import { Colors } from '@/constants/Colors';
+import { GradientCircleIcon } from '@/components/GradientCircleIcon';
 
 export default function ChatScreen() {
   const [message, setMessage] = React.useState('');
@@ -19,7 +20,7 @@ export default function ChatScreen() {
         showNotifications={true}
         notificationCount={5}
         showProfile={true}
-        variant="default"
+        variant="gradient"
         showBackButton={true}
         onBackPress={goBack}
       />
@@ -27,11 +28,12 @@ export default function ChatScreen() {
         scrollable={true}
         edges={['bottom', 'left', 'right',]}
         contentContainerStyle={{ paddingTop: 0, paddingBottom: Platform.OS === 'ios' ? 88 : 68, paddingHorizontal: 8 }}
+        backgroundColor={"#efe9f8"}
       >
         <View style={styles.chatContainer} className="flex-1 mt-4 mb-20">
           <View style={styles.aiMessageContainer}>
             <View style={styles.aiMessageIcon}>
-              <MaterialCommunityIcons name="robot-happy-outline" size={24} color={"#ffffff"} className='bg-[#002a52] p-2 rounded-full' />
+            <GradientCircleIcon iconName={"Sparkles"} gradientColors={[Colors.primary , "#8B5CF6"]} iconSize={24} circleSize={48} iconColor='#ffffff'/>
             </View>
             <View style={styles.aiMessageContent}>
               <ThemedText type="default" style={styles.aiMessageText}>
@@ -49,12 +51,11 @@ export default function ChatScreen() {
               value={message}
               onChangeText={setMessage}
               placeholder="Type your message..."
-              className={"border-none border-0 border-[#002a52  ] bg-gray-100"}
-              classNameInput={"text-sm bg-gray-100 h-12 px-4 rounded-full"}
+              classNameInput={"text-sm bg-gray-100 h-12 px-4"}
             />
           </View>
           <View className='fles align-middle justify-center ml-4'>
-            <Ionicons name="send" size={12} color={"#ffffff"} className='bg-[#002a52] p-3 rounded-full' />
+            <GradientCircleIcon iconName={"Send"} gradientColors={[Colors.primary , "#8B5CF6"]} iconSize={24} circleSize={48} iconColor='#ffffff'/>
           </View>
         </View>
       </View>
