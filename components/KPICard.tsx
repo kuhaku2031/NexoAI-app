@@ -1,4 +1,3 @@
-// components/KPICard.tsx
 import { Colors, ComponentColors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import { ReactNode } from 'react';
