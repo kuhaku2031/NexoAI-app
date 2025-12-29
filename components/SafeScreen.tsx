@@ -15,12 +15,19 @@ interface SafeScreenProps {
   contentContainerStyle?: ViewStyle;
   centered?: boolean;
   hasFloatingTabBar?: boolean;
+  hasHeader?: boolean;
 }
 
 const FLOATING_TAB_BAR_HEIGHT = Platform.select({
   ios: 88,
   android: 68,
   default: 68,
+});
+
+const HEADER_HEIGHT = Platform.select({
+  ios: 108,
+  android: 128,
+  default: 108,
 });
 
 export function SafeScreen({
@@ -34,7 +41,9 @@ export function SafeScreen({
   contentContainerStyle,
   centered = false,
   hasFloatingTabBar = true,
+  hasHeader = false,
 }: SafeScreenProps) {
+  const topPadding = hasHeader ? HEADER_HEIGHT : 0;
   const bottomPadding = hasFloatingTabBar && scrollable 
     ? FLOATING_TAB_BAR_HEIGHT + 20
     : 0;
@@ -46,7 +55,7 @@ export function SafeScreen({
         styles.scrollContent,
         centered && styles.centered,
         contentContainerStyle,
-        { paddingBottom: bottomPadding },
+        { paddingTop: topPadding, paddingBottom: bottomPadding },
       ]}
       showsVerticalScrollIndicator={false}
       bounces={true}
@@ -54,7 +63,7 @@ export function SafeScreen({
       {children}
     </ScrollView>
   ) : (
-    <View style={[styles.nonScrollableContent, contentContainerStyle]}>
+    <View style={[styles.nonScrollableContent, contentContainerStyle, { paddingTop: topPadding, paddingBottom: bottomPadding }]}>
       {children}
     </View>
   );
