@@ -23,7 +23,6 @@ export function InputDisplay({
     icon = '',
     showToggle = true,
     className = '',
-    classNameInput = '',
 }: PasswordInputProps) {
 
     const [showPassword, setShowPassword] = useState(false);
@@ -49,7 +48,6 @@ export function InputDisplay({
                     onChangeText={onChangeText}
                     placeholder={placeholder}
                     secureTextEntry={showToggle === true ? false : !showPassword  }
-                    className={classNameInput}
                 />
 
                 {/* Botón toggle */}
@@ -86,6 +84,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         paddingHorizontal: 12,
         height: 50,
+        borderWidth: 1,
     },
     icon: {
         marginRight: 10,
