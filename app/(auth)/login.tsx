@@ -52,9 +52,9 @@ export default function LoginScreen() {
         {/* Form */}
         <View style={styles.form}>
 
-          <InputDisplay value={email} onChangeText={setEmail} placeholder='Email' label='Email' icon={"mail-outline"} />
+          <InputDisplay className='border-[#90e0ef]' value={email} onChangeText={setEmail} placeholder='Email' label='Email' icon={"mail-outline"} />
 
-          <InputDisplay value={password} onChangeText={setPassword} placeholder='Contraseña' label='Contraseña' icon={"lock-closed-outline"} showToggle={false} />
+          <InputDisplay className='border-[#90e0ef]' value={password} onChangeText={setPassword} placeholder='Contraseña' label='Contraseña' icon={"lock-closed-outline"} showToggle={false} />
 
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 8 }}>
             <View style={styles.checkboxContainer}>
