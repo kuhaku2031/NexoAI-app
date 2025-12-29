@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, View } from 'react-native';
+import {StyleSheet, View } from 'react-native';
 
 import { HeaderBar } from '@/components/HeaderBar';
 import { InputDisplay } from '@/components/InputDisplay';
@@ -27,10 +27,15 @@ export default function ChatScreen() {
       <SafeScreen
         scrollable={true}
         edges={['bottom', 'left', 'right',]}
-        contentContainerStyle={{ paddingTop: 0, paddingBottom: Platform.OS === 'ios' ? 88 : 68, paddingHorizontal: 8 }}
         backgroundColor={"#efe9f8"}
+        hasHeader={true}
+        hasFloatingTabBar={true}
+        contentContainerStyle={{
+          paddingTop: 16,
+          paddingHorizontal: 0,
+        }}
       >
-        <View style={styles.chatContainer} className="flex-1 mt-4 mb-20">
+        <View style={styles.chatContainer} className="flex-1 mb-20">
           <View style={styles.aiMessageContainer}>
             <View style={styles.aiMessageIcon}>
             <GradientCircleIcon iconName={"Sparkles"} gradientColors={[Colors.primary , "#8B5CF6"]} iconSize={24} circleSize={48} iconColor='#ffffff'/>
@@ -43,15 +48,14 @@ export default function ChatScreen() {
           </View>
 
         </View>
-      </SafeScreen>
-      <View className="absolute bottom-0 min-h-40 left-0 right-0 bg-white p-4 border-t border-gray-200">
+      <View className="absolute bottom-0 left-0 right-0 bg-white p-4 border-t border-gray-200">
         <View style={styles.inputContainer}>
           <View className="flex-1 left-0 right-0">
             <InputDisplay
               value={message}
               onChangeText={setMessage}
               placeholder="Type your message..."
-              classNameInput={"text-sm bg-gray-100 h-12 px-4"}
+              className={"text-sm h-12 px-4 border-[#855bc3]"}
             />
           </View>
           <View className='fles align-middle justify-center ml-4'>
@@ -59,6 +63,8 @@ export default function ChatScreen() {
           </View>
         </View>
       </View>
+      </SafeScreen>
+
     </>
   );
 }
@@ -114,5 +120,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 12,
     height: 50,
+    bottom: 80,
   },
 });
