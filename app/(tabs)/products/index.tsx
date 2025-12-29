@@ -7,6 +7,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { goBack } from 'expo-router/build/global-state/routing';
 import { useRef, useState } from 'react';
 import { FlatList, Image, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
@@ -96,12 +97,12 @@ export default function ProductScreen() {
   });
 
   // Stats
-  const stats = {
-    total: products.length,
-    inStock: products.filter(p => getStockStatus(p) === 'in-stock').length,
-    lowStock: products.filter(p => getStockStatus(p) === 'low-stock').length,
-    outOfStock: products.filter(p => getStockStatus(p) === 'out-of-stock').length,
-  };
+  // const stats = {
+  //   total: products.length,
+  //   inStock: products.filter(p => getStockStatus(p) === 'in-stock').length,
+  //   lowStock: products.filter(p => getStockStatus(p) === 'low-stock').length,
+  //   outOfStock: products.filter(p => getStockStatus(p) === 'out-of-stock').length,
+  // };
 
   // Renderizar producto
   const renderProduct = ({ item }: { item: Product }) => {
@@ -156,17 +157,24 @@ export default function ProductScreen() {
   return (
     <>
       <HeaderBar
-        title="Products"
-        subtitle="Manage your inventory"
+        title="Chat AI"
+        subtitle="Always here to help!"
         showNotifications={true}
-        notificationCount={stats.lowStock + stats.outOfStock}
+        notificationCount={5}
         showProfile={true}
-        variant="default"
+        variant="gradient"
+        showBackButton={true}
+        onBackPress={goBack}
       />
 
       <SafeScreen
-        edges={['bottom']}
-        contentContainerStyle={{paddingTop: 20 , paddingBottom: Platform.OS === 'ios' ? 88 : 68, paddingHorizontal: 20}}
+        edges={['bottom', 'left', 'right',]}
+        hasHeader={true}
+        hasFloatingTabBar={true}
+        contentContainerStyle={{
+          paddingTop: 16,
+          paddingHorizontal: 16,
+        }}
       >
         {/* Search Bar */}
         <View style={styles.searchContainer}>
@@ -194,7 +202,7 @@ export default function ProductScreen() {
             data={filteredProducts}
             renderItem={renderProduct}
             keyExtractor={item => item.id}
-            contentContainerStyle={styles.listContent}
+            contentContainerStyle={[styles.listContent, { paddingBottom: 120 }]}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={
               <View style={styles.emptyState}>
@@ -214,7 +222,7 @@ export default function ProductScreen() {
       {/* Floating Action Button */}
       <TouchableOpacity style={styles.fab}>
         <LinearGradient
-          colors={[Colors.accent, Colors.primary]}
+          colors={[Colors.primary, Colors.accent]}
           style={styles.fabGradient}
         >
           <Ionicons name="add" size={28} color="#ffffff" />
@@ -386,7 +394,7 @@ const styles = StyleSheet.create({
   fab: {
     position: 'absolute',
     right: 20,
-    bottom: Platform.OS === 'ios' ? 100 : 80,
+    bottom: Platform.OS === 'ios' ? 120 : 100,
     elevation: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
