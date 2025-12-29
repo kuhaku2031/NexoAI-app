@@ -109,7 +109,7 @@ export function HeaderBar({
     return (
       <View style={styles.gradientContainer}>
         <LinearGradient
-          colors={[Colors.bg_dark, Colors.primary]}
+          colors={[Colors.primary, Colors.accent]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradientWrapper}
@@ -139,10 +139,11 @@ export function HeaderBar({
 const styles = StyleSheet.create({
   gradientContainer: {
     width: '100%',
+    position: 'absolute',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    backgroundColor: '#e9f1fb',
+    zIndex: 1000,
   },
   wrapper: {
     width: '100%',
@@ -154,19 +155,24 @@ const styles = StyleSheet.create({
   },
   gradientWrapper: {
     width: '100%',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    zIndex: 1000,
     overflow: 'hidden',
     backgroundColor: 'transparent',
   },
   container: {
+    position: 'relative',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingBottom: 16,
     minHeight: 56,
-    backgroundColor: Colors.primary,
   },
   leftContainer: {
     flexDirection: 'row',
