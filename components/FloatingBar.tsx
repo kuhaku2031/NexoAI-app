@@ -4,7 +4,7 @@ import { IconName } from '@/constants/IconMaps';
 import { BlurView } from 'expo-blur';
 import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View, Dimensions } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -130,7 +130,7 @@ function TabButton({ route, index, isFocused, tab, onPress }: TabButtonProps) {
       <Animated.View style={[styles.iconContainer, animatedStyle]}>
         {isFocused ? (
           <LinearGradient
-            colors={[Colors.accent, Colors.primary]}
+            colors={[Colors.primary, Colors.accent]}
             style={styles.activeBackground}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -176,14 +176,16 @@ function AnimatedIndicator({
   selectedIndex,
   tabCount,
 }: AnimatedIndicatorProps) {
+  const screenWidth = Dimensions.get('window').width;
+  const tabWidth = (screenWidth) / tabCount;
+
   const animatedStyle = useAnimatedStyle(() => {
-    const tabWidth = 100 / tabCount;
     return {
       transform: [
         {
-          translateX: withSpring(selectedIndex.value * (tabWidth * 3.6), {
-            damping: 20,
-            stiffness: 85,
+          translateX: withSpring(selectedIndex.value * tabWidth, {
+            damping: 30,
+            stiffness: 250,
           }),
         },
       ],
@@ -216,8 +218,8 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   blurContainer: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
     overflow: 'hidden',
     backgroundColor: 'rgba(255, 255, 255, 0.75)',
     borderWidth: 1,
@@ -226,9 +228,7 @@ const styles = StyleSheet.create({
   },
   tabContainer: {
     flexDirection: 'row',
-    paddingTop: 12,
-    paddingBottom: 8,
-    paddingHorizontal: 8,
+    paddingHorizontal: 2,
   },
   tabButton: {
     flex: 1,
@@ -258,14 +258,14 @@ const styles = StyleSheet.create({
   },
   indicator: {
     position: 'absolute',
-    bottom: 0,
     left: 0,
-    width: '20%',
+    bottom: 0,
+    width: Dimensions.get('window').width / 5,
     height: 3,
   },
   indicatorGradient: {
     flex: 1,
-    borderTopLeftRadius: 2,
-    borderTopRightRadius: 2,
+    borderBottomLeftRadius: 2,
+    borderBottomRightRadius: 2,
   },
 });
