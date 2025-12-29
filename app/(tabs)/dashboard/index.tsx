@@ -7,7 +7,6 @@ import { PermissionGuard } from '@/components/PermissionGuard';
 import { SafeScreen } from '@/components/SafeScreen';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors, ComponentColors } from '@/constants/Colors';
-import { useAuth } from '@/hooks/useAuth';
 import { Permission } from '@/types/auth.types';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -20,7 +19,6 @@ const SCREEN_PADDING = 40;
 const screenWidth = Dimensions.get("window").width - SCREEN_PADDING;
 
 export default function DashboardScreen() {
-  const { user } = useAuth();
 
   const data = {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
@@ -75,12 +73,12 @@ export default function DashboardScreen() {
         variant="gradient"
         showBackButton={false}
         onBackPress={goBack}
-        backgroundColor={Colors.bg_dark}
       />
       <SafeScreen
         scrollable={true}
         edges={['bottom', 'left', 'right']}
         hasFloatingTabBar={true}
+        hasHeader={true}
         contentContainerStyle={{
           paddingTop: 20,
         }}
@@ -180,7 +178,7 @@ export default function DashboardScreen() {
         <PermissionGuard permission={Permission.VIEW_ANALYTICS}>
           <View style={styles.analyticsContainer}>
             <LinearGradient
-              colors={[Colors.accent, Colors.primary]}
+              colors={[Colors.primary, Colors.accent]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.gradientContainer}
