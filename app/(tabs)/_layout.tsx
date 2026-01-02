@@ -1,19 +1,10 @@
 import { FloatingTabBar } from '@/components/FloatingBar';
-import { getVisibleTabs } from '@/config/tabs.config';
-import { useAuth } from '@/hooks/useAuth';
+import { TAB_CONFIGS } from '@/config/tabs.config';
 import { Tabs } from 'expo-router';
-import { useMemo } from 'react';
 
 
 export default function TabLayout() {
-  const { hasPermission, isAuthenticated } = useAuth();
 
-  const visibleTabs = useMemo(() => {
-    if (!isAuthenticated) {
-      return [];
-    }
-    return getVisibleTabs(hasPermission);
-  }, [hasPermission, isAuthenticated]);
 
   return (
     <Tabs
@@ -23,7 +14,7 @@ export default function TabLayout() {
       tabBar={(props) => (
         <FloatingTabBar
           {...props}
-          tabs={visibleTabs.map(tab => ({
+          tabs={TAB_CONFIGS.map(tab => ({
             name: tab.icon,
             label: tab.title,
             icon: tab.icon,
@@ -31,7 +22,7 @@ export default function TabLayout() {
         />
       )}
     >
-      {visibleTabs.map(({ name, title, icon }) => (
+      {TAB_CONFIGS.map(({ name, title, icon }) => (
         <Tabs.Screen
           key={name}
           name={name}

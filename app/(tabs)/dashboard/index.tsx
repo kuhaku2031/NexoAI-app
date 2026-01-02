@@ -3,11 +3,9 @@ import { Dimensions, StyleSheet, View } from 'react-native';
 import { DropDownStyled } from '@/components/DropDwonStyled';
 import { HeaderBar } from '@/components/HeaderBar';
 import { KPICard } from '@/components/KPICard';
-import { PermissionGuard } from '@/components/PermissionGuard';
 import { SafeScreen } from '@/components/SafeScreen';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors, ComponentColors } from '@/constants/Colors';
-import { Permission } from '@/types/auth.types';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { goBack } from 'expo-router/build/global-state/routing';
@@ -175,7 +173,6 @@ export default function DashboardScreen() {
         </View>
 
         {/* Analytics con Gradient - Solo visible con permiso VIEW_ANALYTICS */}
-        <PermissionGuard permission={Permission.VIEW_ANALYTICS}>
           <View style={styles.analyticsContainer}>
             <LinearGradient
               colors={[Colors.primary, Colors.accent]}
@@ -207,10 +204,8 @@ export default function DashboardScreen() {
               />
             </LinearGradient>
           </View>
-        </PermissionGuard>
 
         {/* AI Insights - Solo visible con permiso VIEW_AI_INSIGHTS */}
-        <PermissionGuard permission={Permission.VIEW_AI_INSIGHTS}>
           <View style={styles.insightsContainer}>
 
             {/* Header */}
@@ -245,7 +240,6 @@ export default function DashboardScreen() {
               </View>
             </View>
           </View>
-        </PermissionGuard>
 
       </SafeScreen>
     </>

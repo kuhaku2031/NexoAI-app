@@ -1,10 +1,14 @@
 import axios from "axios";
 import { API_CONFIG, STORAGE_KEYS } from "@/config/api.config";
 import { StorageUtil } from "@/utils/storage";
+import EventEmitter from "react-native/Libraries/vendor/emitter/EventEmitter";
 
-/**
- * Instancia de Axios configurada
- */
+export const authEvents = new EventEmitter();
+let globalLogoutTrigger: (() => void) | null = null;
+export const setGlobalLogoutTrigger = (trigger: () => void) => {
+  globalLogoutTrigger = trigger;
+};
+
 export const api = axios.create({
   baseURL: API_CONFIG.BASE_URL,
   timeout: API_CONFIG.TIMEOUT,
@@ -13,10 +17,6 @@ export const api = axios.create({
   },
 });
 
-/**
- * Interceptor de Request
- * Añade el token de acceso a cada petición
- */
 api.interceptors.request.use(
   async (config) => {
     const token = await StorageUtil.get<string>(STORAGE_KEYS.ACCESS_TOKEN);
@@ -30,58 +30,70 @@ api.interceptors.request.use(
   }
 );
 
-/**
- * Interceptor de Response
- * Maneja errores 401 y renueva el token
- */
 api.interceptors.response.use(
+
   (response) => response,
+
   async (error) => {
+
     const originalRequest = error.config;
 
-    // Si el error es 401 y no hemos reintentado aún
+
     if (error.response?.status === 401 && !originalRequest._retry) {
+
       originalRequest._retry = true;
 
+
       try {
-        const refreshToken = await StorageUtil.get<string>(
-          STORAGE_KEYS.REFRESH_TOKEN
-        );
 
-        if (!refreshToken) {
-          throw new Error("No refresh token available");
-        }
+        const refreshToken = await StorageUtil.get<string>(STORAGE_KEYS.REFRESH_TOKEN);
 
-        // Intentar renovar el token
-        // Nota: Usamos axios.post directamente para evitar el interceptor y bucles infinitos
+        if (!refreshToken) throw new Error("No refresh token available");
+
+
         const response = await axios.post(
+
           `${API_CONFIG.BASE_URL}/${API_CONFIG.ENDPOINTS.AUTH.REFRESH}`,
-          {
-            refresh_token: refreshToken,
-          }
+
+          { refresh_token: refreshToken }
+
         );
+
 
         const { access_token } = response.data;
 
-        // Guardar nuevo token
         await StorageUtil.set(STORAGE_KEYS.ACCESS_TOKEN, access_token);
 
-        // Actualizar header de la petición original
         originalRequest.headers.Authorization = `Bearer ${access_token}`;
 
-        // Reintentar la petición original
         return api(originalRequest);
+
+
       } catch (refreshError) {
-        // Si falla la renovación, limpiar sesión
+
         await StorageUtil.remove(STORAGE_KEYS.ACCESS_TOKEN);
+
         await StorageUtil.remove(STORAGE_KEYS.REFRESH_TOKEN);
+
         await StorageUtil.remove(STORAGE_KEYS.USER_DATA);
 
-        // Aquí podrías emitir un evento para redirigir al login
+
+        // Llama a la función global de logout (que usa el contexto)
+
+        if (globalLogoutTrigger) globalLogoutTrigger();
+
+
         return Promise.reject(refreshError);
+
       }
+
     }
 
+
     return Promise.reject(error);
+
   }
+
+
 );
+

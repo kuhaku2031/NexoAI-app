@@ -1,20 +1,13 @@
 import Constants from "expo-constants";
 
-/**
- * Configuración de la API
- * Cambia automáticamente entre desarrollo y producción
- */
 export const API_CONFIG = {
-  // URL base de la API
-  // Usamos la IP del host de Expo para que funcione en dispositivos físicos y emuladores Android
   BASE_URL: __DEV__
     ? `http://${Constants.expoConfig?.hostUri?.split(":").shift() || "localhost"}:3001`
     : "https://api.tudominio.com",
 
-  // Timeout para las peticiones (10 segundos)
   TIMEOUT: 10000,
 
-  // Endpoints de la API
+
   ENDPOINTS: {
     AUTH: {
       LOGIN: "api/v1/auth/login",
@@ -42,9 +35,6 @@ export const API_CONFIG = {
   },
 };
 
-/**
- * Claves para almacenamiento local
- */
 export const STORAGE_KEYS = {
   ACCESS_TOKEN: "@nexoai:access_token",
   REFRESH_TOKEN: "@nexoai:refresh_token",
