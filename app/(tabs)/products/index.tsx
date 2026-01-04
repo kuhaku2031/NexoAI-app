@@ -1,159 +1,52 @@
-// app/(tabs)/products/index.tsx
-import { FilterBottomSheetRef } from '@/components/FilterBottomSheet';
 import { HeaderBar } from '@/components/HeaderBar';
+import { InputDisplay } from '@/components/InputDisplay';
+import ProductsFlatList from '@/components/ProductsFlatList';
 import { SafeScreen } from '@/components/SafeScreen';
-import { SearchBar } from '@/components/SearchBar';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
+import { CreateProduct, useProducts } from '@/hooks/useProducts';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { goBack } from 'expo-router/build/global-state/routing';
-import { useRef, useState } from 'react';
-import { FlatList, Image, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useState } from 'react';
+import { Button, Modal, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-// Tipos
-interface Product {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  stock: number;
-  lowStockThreshold: number;
-  image?: string;
-  sku: string;
-}
 
 export default function ProductScreen() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState<'all' | 'in-stock' | 'low-stock' | 'out-of-stock'>('all');
 
-  const filterSheetRef = useRef<FilterBottomSheetRef>(null);
-  const [products] = useState<Product[]>([
-    {
-      id: '1',
-      name: 'Wireless Headphones',
-      category: 'Electronics',
-      price: 79.99,
-      stock: 45,
-      lowStockThreshold: 10,
-      sku: 'WH-001',
-    },
-    {
-      id: '2',
-      name: 'Coffee Maker',
-      category: 'Appliances',
-      price: 129.99,
-      stock: 8,
-      lowStockThreshold: 10,
-      sku: 'CM-002',
-    },
-    {
-      id: '3',
-      name: 'Running Shoes',
-      category: 'Sports',
-      price: 89.99,
-      stock: 0,
-      lowStockThreshold: 5,
-      sku: 'RS-003',
-    },
-    {
-      id: '4',
-      name: 'Backpack',
-      category: 'Accessories',
-      price: 49.99,
-      stock: 23,
-      lowStockThreshold: 10,
-      sku: 'BP-004',
-    },
-    {
-      id: '5',
-      name: 'Smart Watch',
-      category: 'Electronics',
-      price: 299.99,
-      stock: 3,
-      lowStockThreshold: 5,
-      sku: 'SW-005',
-    },
-  ]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [newProduct, setNewProduct] = useState({ name: '', purchase_price: '', selling_price: '', stock: '' });
+  const { data: products, isLoading } = useProducts();
+  const CreateProductMutation = CreateProduct();
 
-  // Funciones de filtrado y búsqueda
-  const getStockStatus = (product: Product) => {
-    if (product.stock === 0) return 'out-of-stock';
-    if (product.stock <= product.lowStockThreshold) return 'low-stock';
-    return 'in-stock';
-  };
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+    console.log('Toggling modal. New state:', !isModalVisible);
+  }
 
-  const filteredProducts = products.filter(product => {
-    // Filtro por búsqueda
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.sku.toLowerCase().includes(searchQuery.toLowerCase());
+  const handleSubmit = () => {
+    try {
 
-    // Filtro por estado de stock
-    const status = getStockStatus(product);
-    const matchesFilter = selectedFilter === 'all' || status === selectedFilter;
+      
 
-    return matchesSearch && matchesFilter;
-  });
+      const newProductData = {
+        name: newProduct.name,
+        code: 212712228, // Asignar un código adecuado según la lógica de tu aplicación
+        purchase_price: parseInt(newProduct.purchase_price),
+        selling_price: parseInt(newProduct.selling_price),
+        category: 'comida', // O asignar según la lógica de tu aplicación
+        stock: parseInt(newProduct.stock, 10)
+      };
 
-  // Stats
-  // const stats = {
-  //   total: products.length,
-  //   inStock: products.filter(p => getStockStatus(p) === 'in-stock').length,
-  //   lowStock: products.filter(p => getStockStatus(p) === 'low-stock').length,
-  //   outOfStock: products.filter(p => getStockStatus(p) === 'out-of-stock').length,
-  // };
+      console.log('Payload enviado:', JSON.stringify(newProductData, null, 2));
 
-  // Renderizar producto
-  const renderProduct = ({ item }: { item: Product }) => {
-    const status = getStockStatus(item);
-    const statusConfig = {
-      'in-stock': { color: Colors.success, text: 'In Stock', icon: 'checkmark-circle' as const },
-      'low-stock': { color: Colors.warning, text: 'Low Stock', icon: 'alert-circle' as const },
-      'out-of-stock': { color: Colors.error, text: 'Out of Stock', icon: 'close-circle' as const },
-    };
-
-    const config = statusConfig[status];
-
-    return (
-      <TouchableOpacity style={styles.productCard}>
-        {/* Image */}
-        <View style={styles.productImageContainer}>
-          {item.image ? (
-            <Image source={{ uri: item.image }} style={styles.productImage} />
-          ) : (
-            <View style={styles.productImagePlaceholder}>
-              <Ionicons name="cube-outline" size={40} color={Colors.text_seconday} />
-            </View>
-          )}
-        </View>
-
-        {/* Info */}
-        <View style={styles.productInfo}>
-          <ThemedText type="defaultSemiBold" style={styles.productName}>
-            {item.name}
-          </ThemedText>
-          <ThemedText style={styles.productCategory}>
-            {item.category} • {item.sku}
-          </ThemedText>
-
-          <View style={styles.productFooter}>
-            <ThemedText type="defaultSemiBold" style={styles.productPrice}>
-              ${item.price.toFixed(2)}
-            </ThemedText>
-
-            <View style={[styles.statusBadge, { backgroundColor: `${config.color}15` }]}>
-              <Ionicons name={config.icon} size={14} color={config.color} />
-              <ThemedText style={[styles.statusText, { color: config.color }]}>
-                {item.stock} units
-              </ThemedText>
-            </View>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
+      CreateProductMutation.mutate(newProductData);
+      toggleModal();
+      setNewProduct({ name: '', purchase_price: '', selling_price: '', stock: '' });
+    } catch (error) {
+      console.error('Error adding product:', CreateProductMutation.error, error);
+    }
+  }
   return (
     <>
       <HeaderBar
@@ -176,51 +69,11 @@ export default function ProductScreen() {
           paddingHorizontal: 16,
         }}
       >
-        {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <SearchBar
-            placeholder="Search by name, category or SKU..."
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            showFilter={true}
-            onFilterPress={() => filterSheetRef.current?.open()}
-          />
-        </View>
-
-        {/* Products List */}
-        <View style={styles.listContainer}>
-          <View style={styles.listHeader}>
-            <ThemedText type="subtitle" style={styles.listTitle}>
-              {selectedFilter === 'all' ? 'All Products' : selectedFilter === 'in-stock' ? 'In Stock' : selectedFilter === 'low-stock' ? 'Low Stock' : 'Out of Stock'}
-            </ThemedText>
-            <ThemedText style={styles.listCount}>
-              {filteredProducts.length} products
-            </ThemedText>
-          </View>
-
-          <FlatList
-            data={filteredProducts}
-            renderItem={renderProduct}
-            keyExtractor={item => item.id}
-            contentContainerStyle={[styles.listContent, { paddingBottom: 120 }]}
-            showsVerticalScrollIndicator={false}
-            ListEmptyComponent={
-              <View style={styles.emptyState}>
-                <Ionicons name="search-outline" size={64} color={Colors.disabled} />
-                <ThemedText type="subtitle" style={styles.emptyTitle}>
-                  No products found
-                </ThemedText>
-                <ThemedText style={styles.emptySubtitle}>
-                  Try adjusting your search or filters
-                </ThemedText>
-              </View>
-            }
-          />
-        </View>
+        {isLoading ? <ThemedText>Loading products...</ThemedText> : products && <ProductsFlatList product={products} />}
       </SafeScreen>
 
       {/* Floating Action Button */}
-      <TouchableOpacity style={styles.fab}>
+      <TouchableOpacity style={styles.fab} onPress={toggleModal}>
         <LinearGradient
           colors={[Colors.primary, Colors.accent]}
           style={styles.fabGradient}
@@ -228,167 +81,72 @@ export default function ProductScreen() {
           <Ionicons name="add" size={28} color="#ffffff" />
         </LinearGradient>
       </TouchableOpacity>
+
+      {/* El Modal */}
+      <Modal
+        visible={isModalVisible}
+        animationType="slide"  // Opciones: 'slide', 'fade', 'none'
+        transparent={true}  // Hace el fondo semi-transparente
+        onRequestClose={toggleModal}  // Para Android (botón back)
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <ThemedText type="subtitle" style={styles.modalTitle}>Add New Product</ThemedText>
+            {/* Formulario */}
+
+            <InputDisplay
+              value={newProduct.name}
+              onChangeText={(text) => setNewProduct({ ...newProduct, name: text })}
+              placeholder="Product Name"
+              label="Product Name"
+              icon={"information-circle-outline"}
+
+            />
+
+
+            <InputDisplay
+              value={newProduct.purchase_price}
+              onChangeText={(text) => setNewProduct({ ...newProduct, purchase_price: text })}
+              placeholder="Purchase Price"
+              label="Purchase Price"
+              icon={"information-circle-outline"}
+              keyboardType='decimal-pad'
+            />
+
+
+            <InputDisplay
+              value={newProduct.selling_price}
+              onChangeText={(text) => setNewProduct({ ...newProduct, selling_price: text })}
+              placeholder="Selling Price"
+              label="Selling Price"
+              icon={"information-circle-outline"}
+              keyboardType='decimal-pad'
+            />
+
+            <InputDisplay
+              value={newProduct.stock}
+              onChangeText={(text) => setNewProduct({ ...newProduct, stock: text })}
+              placeholder="Stock"
+              label="Stock"
+              icon={"information-circle-outline"}
+              keyboardType='numeric'
+            />
+
+
+            {/* Botones */}
+            <View style={styles.modalButtons}>
+              <Button title="Cancel" onPress={toggleModal} />
+              <Button title="Add Product" onPress={handleSubmit} />
+            </View>
+          </View>
+        </View>
+      </Modal>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  searchContainer: {
-    marginBottom: 16,
-  },
 
-  // Stats Cards
-  statsContainer: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 20,
-  },
-  statCard: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 12,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'transparent',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-  },
-  statCardActive: {
-    borderColor: Colors.primary,
-  },
-  statGradient: {
-    width: '100%',
-    alignItems: 'center',
-    padding: 8,
-    borderRadius: 8,
-  },
-  statNumber: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: Colors.primary,
-  },
-  statNumberWhite: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#ffffff',
-  },
-  statLabel: {
-    fontSize: 11,
-    color: Colors.text_seconday,
-    marginTop: 4,
-  },
-  statLabelWhite: {
-    fontSize: 11,
-    color: '#ffffff',
-    marginTop: 4,
-  },
-
-  // List
-  listContainer: {
-    flex: 1,
-  },
-  listHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  listTitle: {
-    color: Colors.text_primary,
-  },
-  listCount: {
-    color: Colors.text_seconday,
-    fontSize: 14,
-  },
-  listContent: {
-    paddingBottom: 20,
-  },
-
-  // Product Card
-  productCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
-    flexDirection: 'row',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-  },
-  productImageContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
-    overflow: 'hidden',
-    marginRight: 12,
-  },
-  productImage: {
-    width: '100%',
-    height: '100%',
-  },
-  productImagePlaceholder: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: Colors.bg_light_accent,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  productInfo: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  productName: {
-    fontSize: 16,
-    color: Colors.text_primary,
-    marginBottom: 4,
-  },
-  productCategory: {
-    fontSize: 12,
-    color: Colors.text_seconday,
-  },
-  productFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  productPrice: {
-    fontSize: 18,
-    color: Colors.primary,
-  },
-  statusBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  statusText: {
-    fontSize: 11,
-    fontWeight: '600',
-  },
-
-  // Empty State
-  emptyState: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 60,
-  },
-  emptyTitle: {
-    color: Colors.text_primary,
-    marginTop: 16,
-  },
-  emptySubtitle: {
-    color: Colors.text_seconday,
-    marginTop: 8,
-  },
 
   // FAB
   fab: {
@@ -407,5 +165,46 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  // Modal
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',  // Fondo semi-transparente
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  modalContent: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    padding: 20,
+    width: '90%',
+    maxWidth: 400,
+    elevation: 10,  // Sombra en Android
+    shadowColor: '#000',  // Sombra en iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+
+  modalTitle: {
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+
+  input: {
+    borderWidth: 1,
+    borderColor: Colors.accent,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    fontSize: 16,
+  },
+
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
   },
 });

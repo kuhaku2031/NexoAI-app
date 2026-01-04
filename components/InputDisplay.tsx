@@ -12,7 +12,7 @@ interface PasswordInputProps {
     label?: string;
     showToggle?: boolean;
     className?: string;
-    classNameInput?: string;
+    keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'decimal-pad' | 'number-pad';
 }
 
 export function InputDisplay({
@@ -23,6 +23,7 @@ export function InputDisplay({
     icon = '',
     showToggle = true,
     className = '',
+    keyboardType = 'default',
 }: PasswordInputProps) {
 
     const [showPassword, setShowPassword] = useState(false);
@@ -48,6 +49,7 @@ export function InputDisplay({
                     onChangeText={onChangeText}
                     placeholder={placeholder}
                     secureTextEntry={showToggle === true ? false : !showPassword  }
+                    keyboardType={keyboardType}
                 />
 
                 {/* Botón toggle */}

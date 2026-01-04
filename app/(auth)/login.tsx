@@ -27,8 +27,6 @@ export default function LoginScreen() {
 
     try {
       await login(email, password);
-      // La redirección se manejará automáticamente por el layout o el contexto
-      // pero por seguridad podemos forzarla aquí si es necesario
       router.replace('/(tabs)');
     } catch (error) {
       Alert.alert('Error', 'Credenciales inválidas o error de conexión' + error);

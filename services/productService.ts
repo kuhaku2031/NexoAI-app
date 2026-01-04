@@ -7,22 +7,32 @@ export interface ProductFilters {
   limit?: number;
   search?: string;
   categories?: string[];
-  minPrice?: number;
-  maxPrice?: number;
-  stockStatus?: 'in-stock' | 'low-stock' | 'out-of-stock';
-  sortBy?: 'name' | 'selling_price' | 'stock' | 'created_at';
-  sortOrder?: 'ASC' | 'DESC';
+  min_price?: number;
+  max_price?: number;
+  stock_status?: 'in-stock' | 'low-stock' | 'out-of-stock';
+  sort_by?: 'name' | 'selling_price' | 'stock' | 'created_at';
+  sort_order?: 'ASC' | 'DESC';
 }
 
 export interface Product {
-  id: number;
+  id?: number;
   name: string;
   code: number;
+  purchase_price?: number;
   selling_price: number;
   stock: number;
   category: {
     category_name: string;
   };
+}
+
+export interface NewProductDto {
+    name: string;
+    code: number;
+    purchase_price?: number;
+    selling_price: number;
+    category: string;
+    stock: number;
 }
 
 export interface PaginatedProducts {
@@ -38,9 +48,6 @@ export interface PaginatedProducts {
 }
 
 export class ProductsService {
-  /**
-   * Obtener productos con filtros
-   */
   static async getProducts(
     filters: ProductFilters = {}
   ): Promise<PaginatedProducts> {
@@ -62,21 +69,21 @@ export class ProductsService {
     }
 
     // Precios
-    if (filters.minPrice !== undefined) {
-      params.append('minPrice', filters.minPrice.toString());
+    if (filters.min_price !== undefined) {
+      params.append('min_price', filters.min_price.toString());
     }
-    if (filters.maxPrice !== undefined) {
-      params.append('maxPrice', filters.maxPrice.toString());
+    if (filters.max_price !== undefined) {
+      params.append('max_price', filters.max_price.toString());
     }
 
     // Stock
-    if (filters.stockStatus) {
-      params.append('stockStatus', filters.stockStatus);
+    if (filters.stock_status) {
+      params.append('stock_status', filters.stock_status);
     }
 
     // Ordenamiento
-    if (filters.sortBy) params.append('sortBy', filters.sortBy);
-    if (filters.sortOrder) params.append('sortOrder', filters.sortOrder);
+    if (filters.sort_by) params.append('sort_by', filters.sort_by);
+    if (filters.sort_order) params.append('sort_order', filters.sort_order);
 
     // 2. Hacer petición
     const queryString = params.toString();
@@ -86,11 +93,17 @@ export class ProductsService {
     return response.data;
   }
 
-  /**
-   * Búsqueda rápida (sin filtros complejos)
-   */
   static async searchProducts(searchTerm: string): Promise<Product[]> {
     const result = await this.getProducts({ search: searchTerm, limit: 10 });
     return result.data;
+  }
+
+  static async createProductDto(newProductDto: NewProductDto): Promise<NewProductDto> {
+    try {
+    const response = await api.post<NewProductDto>(API_CONFIG.ENDPOINTS.PRODUCTS.CREATE, newProductDto);
+    return response.data; 
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 }
