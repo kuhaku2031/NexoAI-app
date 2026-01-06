@@ -50,6 +50,9 @@ export class AuthService {
         pointOfSaleId: backendUser.company_id,
       };
 
+      console.log(response.data)
+      console.log("Logged in user:", user);
+
       // Guardar datos del usuario
       await StorageUtil.set(STORAGE_KEYS.USER_DATA, user);
 

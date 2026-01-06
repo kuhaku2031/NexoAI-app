@@ -14,7 +14,7 @@ export function useProducts() {
   return products;
 }
 
-export const CreateProduct = () => {
+export function useCreateProduct() {
   const QueryClient = useQueryClient();
 
   const CreateProductMutation = useMutation({
@@ -30,4 +30,14 @@ export const CreateProduct = () => {
     }
   });
   return CreateProductMutation;
+}
+
+export function useCategories() {
+  const categories = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      return await ProductsService.getCategories();},
+  });
+
+  return categories;
 }

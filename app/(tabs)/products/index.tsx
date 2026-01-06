@@ -4,31 +4,36 @@ import ProductsFlatList from '@/components/ProductsFlatList';
 import { SafeScreen } from '@/components/SafeScreen';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors } from '@/constants/Colors';
-import { CreateProduct, useProducts } from '@/hooks/useProducts';
+import { useCategories, useCreateProduct, useProducts } from '@/hooks/useProducts';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { goBack } from 'expo-router/build/global-state/routing';
 import { useState } from 'react';
 import { Button, Modal, Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ThemedDropDown } from '../../../components/ThemedDropDown';
 
 
 export default function ProductScreen() {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [newProduct, setNewProduct] = useState({ name: '', purchase_price: '', selling_price: '', stock: '' });
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [newProduct, setNewProduct] = useState({ name: '', purchase_price: '', selling_price: '', stock: '', category: '' });
   const { data: products, isLoading } = useProducts();
-  const CreateProductMutation = CreateProduct();
+  const CreateProductMutation = useCreateProduct();
+  const { data: categories } = useCategories();
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
     console.log('Toggling modal. New state:', !isModalVisible);
   }
 
+  const handleCategoryChange = (value: string) => {
+    setSelectedCategory(value);
+    setNewProduct({ ...newProduct, category: value });
+  };
+
   const handleSubmit = () => {
     try {
-
-      
-
       const newProductData = {
         name: newProduct.name,
         code: 212712228, // Asignar un código adecuado según la lógica de tu aplicación
@@ -42,7 +47,7 @@ export default function ProductScreen() {
 
       CreateProductMutation.mutate(newProductData);
       toggleModal();
-      setNewProduct({ name: '', purchase_price: '', selling_price: '', stock: '' });
+      setNewProduct({ name: '', purchase_price: '', selling_price: '', stock: '', category: '' });
     } catch (error) {
       console.error('Error adding product:', CreateProductMutation.error, error);
     }
@@ -103,6 +108,14 @@ export default function ProductScreen() {
 
             />
 
+            <ThemedDropDown
+              value={selectedCategory}
+              onValueChange={(value) => handleCategoryChange(value)}
+              items={categories ? categories.map((cat: any) => ({ label: cat.category_name, value: cat.category_name })) : []}
+              placeholder="Select Category"
+              label='Categories'
+            />
+
 
             <InputDisplay
               value={newProduct.purchase_price}
@@ -131,7 +144,6 @@ export default function ProductScreen() {
               icon={"information-circle-outline"}
               keyboardType='numeric'
             />
-
 
             {/* Botones */}
             <View style={styles.modalButtons}>

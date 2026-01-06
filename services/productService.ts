@@ -106,4 +106,9 @@ export class ProductsService {
       return Promise.reject(error);
     }
   }
+
+  static async getCategories(): Promise<string[]> {
+    const response = await api.get<string[]>(API_CONFIG.ENDPOINTS.CATEGORIES.LIST);
+    return response.data;
+  }
 }

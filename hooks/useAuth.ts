@@ -11,9 +11,6 @@ export const useAuth = () => {
     mutationFn: async ({ email, password }: { email: string; password: string }): Promise<User> => {
       return await AuthService.login(email, password);
     },
-    onSuccess: (user) => {
-      queryClient.invalidateQueries({ queryKey: ['user'] });
-    },
     onError: (error) => {
       console.error('Login mutation error:', error);
     },

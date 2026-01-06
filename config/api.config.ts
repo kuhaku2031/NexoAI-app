@@ -18,6 +18,9 @@ export const API_CONFIG = {
       ME: "api/v1/users/me",
       UPDATE: "api/v1/users/update",
     },
+    CATEGORIES:{
+      LIST: "api/v1/categories",
+    },
     PRODUCTS: {
       LIST: "api/v1/products",
       CREATE: "api/v1/products",
